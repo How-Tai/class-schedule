@@ -1,0 +1,25 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 100px;
+}
+
+#toggles {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: white;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: left;
+  z-index: 1000;
+}
+
+#schedule {
+  max-width: 100%;
+  width: 768px;
+  height: auto;
+  text-align: center;
+  margin: 20px auto;
+}

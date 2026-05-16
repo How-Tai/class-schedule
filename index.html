@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Random Project</title>
+</head>
+
+<body>
+    <div id="toggles">
+        <input type="checkbox" id="showMilliseconds" onchange="toggleMilliseconds()">
+        <label for="showMilliseconds">Show milliseconds</label>
+        <br>
+        <input type="checkbox" id="displaySchedule" onchange="toggleDisplaySchedule()">
+        <label for="displaySchedule">Display schedule</label>
+    </div>
+    <h1 id="dayTime">Loading...</h1>
+    <p id="current" style="font-size: 24px;">Loading...</p>
+    <p id="next" style="font-size: 24px">Loading...</p>
+
+    <img id="schedule" src="schedule.jpg" alt="Class Schedule" style="display: none; max-width: 100%;"
+>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
+</body>
+</html>
