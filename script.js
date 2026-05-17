@@ -1,5 +1,5 @@
 let schedule = [
-  { subject: "Computer Science", teacher: "Mr. Santos", room: "1024", day: "Monday", start: "08:30", end: "09:25" },
+  { subject: "Computer Science", teacher: "Mr. Santos", room: "754", day: "Monday", start: "08:30", end: "09:25" },
   { subject: "Mathematics", teacher: "Mr. Verona", room: "1024", day: "Monday", start: "09:25", end: "10:20" },
   { subject: "Civics, Culture and Life in Society", teacher: "Mr. Zhang", room: "1024", day: "Monday", start: "10:20", end: "11:15" },
   { subject: "Lunch", teacher: "none", room: "1024", day: "Monday", start: "11:15", end: "12:10" },
