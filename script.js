@@ -14,7 +14,7 @@ let schedule = [
   { subject: "Lunch", teacher: "none", room: "1024", day: "Tuesday", start: "11:15", end: "12:10" },
   { subject: "Science", teacher: "Mr. Krapf", room: "1024", day: "Tuesday", start: "12:10", end: "13:05" },
   { subject: "English Writing", teacher: "Mr. Grudge", room: "1024", day: "Tuesday", start: "13:05", end: "14:00" },
-  { subject: "Assembly", teacher: "I don't know", room: "1024", day: "Tuesday", start: "14:00", end: "14:55" },
+  { subject: "Assembly", teacher: "Mr. Surachet & Mr. Aekkalak", room: "1024", day: "Tuesday", start: "14:00", end: "14:55" },
   { subject: "Physical Education", teacher: "Mr. Spicer", room: "Gym", day: "Tuesday", start: "14:55", end: "15:50" },
 
   { subject: "Mathematics", teacher: "Mr. Verona", room: "1024", day: "Wednesday", start: "08:30", end: "09:25" },
