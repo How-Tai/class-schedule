@@ -18,8 +18,9 @@ async function login(username, password) {
     return;
   }
 
-  console.log("Logged in");
+  window.location.href = "/admin/";
 }
+
 
 
 document.querySelector("button").addEventListener("click", () => {
