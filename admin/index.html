@@ -29,6 +29,7 @@
 		<div class="grid">
 			<section class="panel">
 				<h2>New Announcement</h2>
+				<p>Maximum 20 announcements.</p>
 				<form id="announcement-form">
 					<div>
 						<label for="announcement-title">Title</label>
@@ -45,7 +46,7 @@
 			</section>
 
 			<section class="panel">
-				<h2>New Schedule Override</h2>
+				<h2 id="event-form-title">New Schedule Override</h2>
 				<p>This replaces the normal class display during its time. Overlapping overrides are all shown.</p>
 
 				<form id="event-form">
@@ -76,12 +77,16 @@
 						</div>
 					</div>
 
-					<button class="primary" type="submit">Create Override</button>
+					<div class="form-actions">
+						<button id="event-submit" class="primary" type="submit">Create Override</button>
+						<button id="event-cancel" type="button" hidden>Cancel Edit</button>
+					</div>
 				</form>
 			</section>
 
 			<section class="panel full">
 				<h2>Active & Upcoming Schedule Overrides</h2>
+				<p>Finished overrides are automatically deleted five minutes after their end time.</p>
 				<div id="event-list"></div>
 			</section>
 
