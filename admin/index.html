@@ -10,6 +10,7 @@
 		<h1>Admin</h1>
 		<p id="welcome"></p>
 		<p id="role"></p>
+		<p id="owner-tools" hidden><a href="/admin/hash.html">Password Hash Utility</a></p>
 		<button id="logout" type="button">Logout</button>
 	</main>
 
@@ -33,6 +34,10 @@
 				document.getElementById("admin").hidden = false;
 				document.getElementById("welcome").textContent = `Logged in as ${data.username}`;
 				document.getElementById("role").textContent = `Role: ${data.role}`;
+
+				if(data.role === "owner") {
+					document.getElementById("owner-tools").hidden = false;
+				}
 			}
 			catch {
 				window.location.href = "/admin/login.html";
