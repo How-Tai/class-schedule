@@ -9,6 +9,7 @@
 	<main id="admin" hidden>
 		<h1>Admin</h1>
 		<p id="welcome"></p>
+		<p id="role"></p>
 		<button id="logout" type="button">Logout</button>
 	</main>
 
@@ -31,6 +32,7 @@
 				document.getElementById("loading").hidden = true;
 				document.getElementById("admin").hidden = false;
 				document.getElementById("welcome").textContent = `Logged in as ${data.username}`;
+				document.getElementById("role").textContent = `Role: ${data.role}`;
 			}
 			catch {
 				window.location.href = "/admin/login.html";
