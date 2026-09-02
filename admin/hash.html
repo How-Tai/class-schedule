@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Password Hash Utility</title>
+</head>
+<body>
+	<main>
+		<h1>Password Hash Utility</h1>
+		<p>Owner-only tool for generating bcrypt password hashes.</p>
+
+		<form id="hash-form">
+			<label for="password">Password</label><br>
+			<input type="password" id="password" autocomplete="new-password" required><br><br>
+			<button type="submit">Generate Hash</button>
+		</form>
+
+		<p id="error" hidden></p>
+
+		<section id="result" hidden>
+			<label for="hash">Hash</label><br>
+			<textarea id="hash" rows="4" cols="70" readonly></textarea><br>
+			<button id="copy" type="button">Copy Hash</button>
+		</section>
+
+		<p><a href="/admin/">Back to Admin</a></p>
+	</main>
+
+	<script>
+		async function verifyOwner() {
+			try {
+				const res = await fetch("/api/admin/session", { credentials: "include" });
+				if(!res.ok) {
+					window.location.href = "/admin/login.html";
+					return;
+				}
+
+				const data = await res.json();
+				if(data.role !== "owner") window.location.href = "/admin/";
+			}
+			catch {
+				window.location.href = "/admin/login.html";
+			}
+		}
+
+		document.getElementById("hash-form").addEventListener("submit", async (event) => {
+			event.preventDefault();
+
+			const password = document.getElementById("password").value;
+			const error = document.getElementById("error");
+			const result = document.getElementById("result");
+			const hash = document.getElementById("hash");
+
+			error.hidden = true;
+			result.hidden = true;
+
+			try {
+				const res = await fetch("/api/admin/hash", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ password }),
+					credentials: "include"
+				});
+
+				const data = await res.json();
+
+				if(!res.ok) {
+					error.textContent = data.error || "Could not generate hash";
+					error.hidden = false;
+					return;
+				}
+
+				hash.value = data.hash;
+				result.hidden = false;
+			}
+			catch {
+				error.textContent = "Could not connect to the server";
+				error.hidden = false;
+			}
+		});
+
+		document.getElementById("copy").addEventListener("click", async () => {
+			await navigator.clipboard.writeText(document.getElementById("hash").value);
+		});
+
+		verifyOwner();
+	</script>
+</body>
+</html>
