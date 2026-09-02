@@ -1,4 +1,5 @@
 let session = null;
+let editingEventId = null;
 
 async function api(url, options = {}) {
 	const res = await fetch(url, {
@@ -46,7 +47,6 @@ function bangkokNow() {
 }
 
 function normalizeDate(value) {
-	if(typeof value === "string") return value.slice(0, 10);
 	return String(value).slice(0, 10);
 }
 
@@ -139,6 +139,8 @@ async function loadEvents() {
 		const badge = document.createElement("span");
 		const details = document.createElement("p");
 		const meta = document.createElement("small");
+		const actions = document.createElement("div");
+		const edit = document.createElement("button");
 		const del = document.createElement("button");
 
 		const status = eventStatus(event);
@@ -150,19 +152,52 @@ async function loadEvents() {
 
 		details.textContent = event.details || "No additional details";
 		meta.textContent = `${formatDate(event.event_date)} • ${normalizeTime(event.start_time)}–${normalizeTime(event.end_time)}`;
+
+		edit.textContent = "Edit";
+		edit.type = "button";
+		edit.addEventListener("click", () => beginEditEvent(event));
+
 		del.textContent = "Delete";
 		del.className = "danger";
 		del.type = "button";
 		del.addEventListener("click", () => deleteEvent(event.id));
 
+		actions.className = "item-actions";
+		actions.append(edit, del);
+
 		content.append(heading, details, meta);
-		card.append(content, del);
+		card.append(content, actions);
 		list.appendChild(card);
 	}
 }
 
+function beginEditEvent(event) {
+	editingEventId = event.id;
+
+	document.getElementById("event-title").value = event.title;
+	document.getElementById("event-details").value = event.details || "";
+	document.getElementById("event-date").value = normalizeDate(event.event_date);
+	document.getElementById("event-start").value = normalizeTime(event.start_time);
+	document.getElementById("event-end").value = normalizeTime(event.end_time);
+
+	document.getElementById("event-form-title").textContent = "Edit Schedule Override";
+	document.getElementById("event-submit").textContent = "Save Changes";
+	document.getElementById("event-cancel").hidden = false;
+	document.getElementById("event-title").focus();
+}
+
+function cancelEditEvent() {
+	editingEventId = null;
+	document.getElementById("event-form").reset();
+	document.getElementById("event-date").value = bangkokNow().date;
+	document.getElementById("event-form-title").textContent = "New Schedule Override";
+	document.getElementById("event-submit").textContent = "Create Override";
+	document.getElementById("event-cancel").hidden = true;
+}
+
 async function deleteAnnouncement(id) {
 	if(!confirm("Delete this announcement?")) return;
+
 	try {
 		await api(`/api/admin/announcements?id=${id}`, { method: "DELETE" });
 		await loadAnnouncements();
@@ -174,8 +209,10 @@ async function deleteAnnouncement(id) {
 
 async function deleteEvent(id) {
 	if(!confirm("Delete this schedule override?")) return;
+
 	try {
 		await api(`/api/admin/events?id=${id}`, { method: "DELETE" });
+		if(editingEventId === id) cancelEditEvent();
 		await loadEvents();
 	}
 	catch(error) {
@@ -222,20 +259,34 @@ document.getElementById("event-form").addEventListener("submit", async (event) =
 	const endTime = document.getElementById("event-end").value;
 
 	try {
-		await api("/api/admin/events", {
-			method: "POST",
-			body: JSON.stringify({ title, details, eventDate, startTime, endTime })
-		});
+		if(editingEventId !== null) {
+			await api(`/api/admin/events?id=${editingEventId}`, {
+				method: "PUT",
+				body: JSON.stringify({ title, details, eventDate, startTime, endTime })
+			});
 
-		event.target.reset();
-		document.getElementById("event-date").value = bangkokNow().date;
-		showMessage("Schedule override created.");
+			showMessage("Schedule override updated.");
+			cancelEditEvent();
+		}
+		else {
+			await api("/api/admin/events", {
+				method: "POST",
+				body: JSON.stringify({ title, details, eventDate, startTime, endTime })
+			});
+
+			event.target.reset();
+			document.getElementById("event-date").value = bangkokNow().date;
+			showMessage("Schedule override created.");
+		}
+
 		await loadEvents();
 	}
 	catch(error) {
 		showMessage(error.message, true);
 	}
 });
+
+document.getElementById("event-cancel").addEventListener("click", cancelEditEvent);
 
 document.getElementById("logout").addEventListener("click", async () => {
 	await fetch("/api/admin/logout", { method: "POST", credentials: "include" });
@@ -256,4 +307,4 @@ async function init() {
 }
 
 init();
-setInterval(() => loadEvents().catch(() => {}), 30000);
+setInterval(() => loadEvents().catch(() => {}), 10000);
