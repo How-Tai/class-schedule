@@ -1,55 +1,66 @@
 const crypto = require("crypto");
-
-function safeEqual(a, b) {
-	const x = Buffer.from(String(a));
-	const y = Buffer.from(String(b));
-	if(x.length !== y.length) return false;
-	return crypto.timingSafeEqual(x, y);
-}
+const { neon } = require("@neondatabase/serverless");
+const bcrypt = require("bcryptjs");
 
 function sign(value, secret) {
 	return crypto.createHmac("sha256", secret).update(value).digest("base64url");
 }
 
-module.exports = function handler(req, res) {
+module.exports = async function handler(req, res) {
 	if(req.method !== "POST") {
 		res.setHeader("Allow", "POST");
 		return res.status(405).json({ error: "Method not allowed" });
 	}
 
-	const adminUsername = process.env.ADMIN_USERNAME;
-	const adminPassword = process.env.ADMIN_PASSWORD;
+	const databaseUrl = process.env.DATABASE_URL;
 	const sessionSecret = process.env.SESSION_SECRET;
 
-	if(!adminUsername || !adminPassword || !sessionSecret) {
+	if(!databaseUrl || !sessionSecret) {
 		return res.status(500).json({ error: "Admin login is not configured" });
 	}
 
-	let username;
-	let password;
+	const username = req.body?.username;
+	const password = req.body?.password;
 
-	if(typeof req.body === "string") {
-		const body = new URLSearchParams(req.body);
-		username = body.get("username");
-		password = body.get("password");
-	}
-	else {
-		username = req.body?.username;
-		password = req.body?.password;
+	if(typeof username !== "string" || typeof password !== "string" || !username || !password) {
+		return res.status(400).json({ error: "Username and password are required" });
 	}
 
-	if(!safeEqual(username ?? "", adminUsername) || !safeEqual(password ?? "", adminPassword)) {
-		return res.status(401).json({ error: "Invalid username or password" });
+	try {
+		const sql = neon(databaseUrl);
+		const admins = await sql`
+			SELECT id, username, password_hash, role
+			FROM admins
+			WHERE username = ${username}
+			LIMIT 1
+		`;
+
+		if(admins.length === 0) {
+			return res.status(401).json({ error: "Invalid username or password" });
+		}
+
+		const admin = admins[0];
+		const passwordMatches = await bcrypt.compare(password, admin.password_hash);
+
+		if(!passwordMatches) {
+			return res.status(401).json({ error: "Invalid username or password" });
+		}
+
+		const payload = Buffer.from(JSON.stringify({
+			id: admin.id,
+			username: admin.username,
+			role: admin.role,
+			exp: Date.now() + 8 * 60 * 60 * 1000
+		})).toString("base64url");
+
+		const signature = sign(payload, sessionSecret);
+		const token = `${payload}.${signature}`;
+
+		res.setHeader("Set-Cookie", `admin_session=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${8 * 60 * 60}`);
+		return res.status(200).json({ ok: true, username: admin.username, role: admin.role });
 	}
-
-	const payload = Buffer.from(JSON.stringify({
-		username: adminUsername,
-		exp: Date.now() + 8 * 60 * 60 * 1000
-	})).toString("base64url");
-
-	const signature = sign(payload, sessionSecret);
-	const token = `${payload}.${signature}`;
-
-	res.setHeader("Set-Cookie", `admin_session=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${8 * 60 * 60}`);
-	return res.status(200).json({ ok: true });
+	catch(error) {
+		console.error(error);
+		return res.status(500).json({ error: "Database error" });
+	}
 };
