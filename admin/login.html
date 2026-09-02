@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Admin Login</title>
 </head>
 <body>
-  <label for="username">Username</label><br>
-  <input type="text" id="user" name="username" required><br>
+	<h1>Admin Login</h1>
 
-  <label for="password">Password</label><br>
-  <input type="password" id="password" name="password" required><br>
+	<form id="login-form">
+		<label for="user">Username</label><br>
+		<input type="text" id="user" name="username" autocomplete="username" required><br><br>
 
-  <button type="submit">Login</button>
+		<label for="password">Password</label><br>
+		<input type="password" id="password" name="password" autocomplete="current-password" required><br><br>
+
+		<button type="submit">Login</button>
+	</form>
+
+	<p id="error" hidden></p>
+
+	<script src="/admin/script.js"></script>
 </body>
+</html>
