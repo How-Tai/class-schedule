@@ -14,6 +14,7 @@ module.exports = async function handler(req, res) {
 				SELECT id, title, message, created_at
 				FROM announcements
 				ORDER BY created_at DESC
+				LIMIT 20
 			`;
 
 			return res.status(200).json({ announcements });
@@ -25,6 +26,9 @@ module.exports = async function handler(req, res) {
 
 			if(!title || !message) return res.status(400).json({ error: "Title and message are required" });
 			if(title.length > 120 || message.length > 2000) return res.status(400).json({ error: "Announcement is too long" });
+
+			const countRows = await sql`SELECT COUNT(*)::int AS count FROM announcements`;
+			if(countRows[0].count >= 20) return res.status(409).json({ error: "Announcement limit reached. Delete one before adding another." });
 
 			const rows = await sql`
 				INSERT INTO announcements (title, message, created_by)
