@@ -1,44 +1,126 @@
+* {
+	box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin-top: 100px;
+	font-family: Arial, sans-serif;
+	text-align: center;
+	margin: 0;
+	padding: 90px 20px 40px;
+	background: #f7f8fa;
+	color: #202124;
+}
+
+main {
+	max-width: 900px;
+	margin: 0 auto;
 }
 
 #toggles {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  background: white;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  text-align: left;
-  z-index: 1000;
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	background: white;
+	padding: 8px 12px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	text-align: left;
+	z-index: 1000;
 }
 
 #schedule {
-  max-width: 100%;
-  width: 768px;
-  height: auto;
-  text-align: center;
-  margin: 20px auto;
+	max-width: 100%;
+	width: 768px;
+	height: auto;
+	text-align: center;
+	margin: 20px auto;
 }
 
 .back-button {
-    position: fixed;
-    top: 16px;
-    left: 16px;
-
-    padding: 10px 14px;
-
-    text-decoration: none;
-    color: black;
-
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: white;
+	position: fixed;
+	top: 16px;
+	left: 16px;
+	padding: 10px 14px;
+	text-decoration: none;
+	color: black;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	background: white;
+	z-index: 1000;
 }
 
 .back-button:hover {
-    background: #f0f0f0;
+	background: #f0f0f0;
+}
+
+.schedule-line {
+	font-size: 24px;
+}
+
+.announcements,
+.live-events {
+	background: white;
+	border: 1px solid #ddd;
+	border-radius: 12px;
+	padding: 18px;
+	margin-bottom: 24px;
+	text-align: left;
+}
+
+.announcements h2,
+.live-events h2 {
+	margin-top: 0;
+}
+
+.announcement-card,
+.live-event-card {
+	padding: 14px 0;
+	border-bottom: 1px solid #eee;
+}
+
+.announcement-card:last-child,
+.live-event-card:last-child {
+	border-bottom: 0;
+}
+
+.announcement-card h3,
+.live-event-card h3 {
+	margin: 0 0 6px;
+}
+
+.announcement-card p,
+.live-event-card p {
+	margin: 0;
+	white-space: pre-wrap;
+}
+
+.live-event-time {
+	font-weight: 700;
+	margin-bottom: 6px !important;
+}
+
+.live-events {
+	border-color: #e0b400;
+	background: #fffbed;
+}
+
+.live-status {
+	font-size: 13px;
+	color: #777;
+}
+
+@media (max-width: 600px) {
+	body {
+		padding-top: 130px;
+	}
+
+	#toggles {
+		top: 66px;
+		left: 16px;
+		right: 16px;
+	}
+
+	.schedule-line {
+		font-size: 19px;
+	}
 }
