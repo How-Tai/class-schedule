@@ -8,7 +8,11 @@
 </head>
 <body>
 	<header>
-		<h1>Admin Panel</h1>
+		<div>
+			<h1>Admin Panel</h1>
+			<p class="header-subtitle">Manage announcements and live schedule overrides</p>
+		</div>
+
 		<div class="header-actions">
 			<a id="hash-link" class="button-link" href="/admin/hash.html" hidden>Hash Password</a>
 			<a class="button-link" href="/">View Schedule</a>
@@ -28,8 +32,13 @@
 
 		<div class="grid">
 			<section class="panel">
-				<h2>New Announcement</h2>
-				<p>Maximum 20 announcements.</p>
+				<div class="section-heading">
+					<div>
+						<h2>New Announcement</h2>
+						<p>Announcements are stored normally; the dashboard and public page show the latest 20.</p>
+					</div>
+				</div>
+
 				<form id="announcement-form">
 					<div>
 						<label for="announcement-title">Title</label>
@@ -45,9 +54,13 @@
 				</form>
 			</section>
 
-			<section class="panel">
-				<h2 id="event-form-title">New Schedule Override</h2>
-				<p>This replaces the normal class display during its time. Overlapping overrides are all shown.</p>
+			<section class="panel" id="event-editor-panel">
+				<div class="section-heading">
+					<div>
+						<h2 id="event-form-title">New Schedule Override</h2>
+						<p>Overrides replace the normal class display during their time. Overlapping overrides are all shown.</p>
+					</div>
+				</div>
 
 				<form id="event-form">
 					<div>
@@ -85,13 +98,24 @@
 			</section>
 
 			<section class="panel full">
-				<h2>Active & Upcoming Schedule Overrides</h2>
-				<p>Finished overrides are automatically deleted five minutes after their end time.</p>
+				<div class="section-heading">
+					<div>
+						<h2>Active & Upcoming Overrides</h2>
+						<p>Active overrides can be edited or extended. Finished overrides are removed five minutes after ending.</p>
+					</div>
+					<span id="event-count" class="count-badge">0</span>
+				</div>
 				<div id="event-list"></div>
 			</section>
 
 			<section class="panel full">
-				<h2>Announcements</h2>
+				<div class="section-heading">
+					<div>
+						<h2>Recent Announcements</h2>
+						<p>Showing the 20 most recent announcements.</p>
+					</div>
+					<span id="announcement-count" class="count-badge">0</span>
+				</div>
 				<div id="announcement-list"></div>
 			</section>
 		</div>
