@@ -1,34 +1,35 @@
-async function login(username, password) {
-  const body = new URLSearchParams({
-    username,
-    password
-  });
+document.getElementById("login-form").addEventListener("submit", async (event) => {
+	event.preventDefault();
 
-  const res = await fetch("/admin/login.html", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: body.toString(),
-    credentials: "include"
-  });
+	const username = document.getElementById("user").value;
+	const password = document.getElementById("password").value;
+	const error = document.getElementById("error");
 
-  if (!res.ok) {
-    console.log("Login failed");
-    return;
-  }
+	error.hidden = true;
+	error.textContent = "";
 
-  window.location.href = "/admin/";
-}
+	try {
+		const res = await fetch("/api/admin/login", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({ username, password }),
+			credentials: "include"
+		});
 
+		const data = await res.json();
 
+		if(!res.ok) {
+			error.textContent = data.error || "Login failed";
+			error.hidden = false;
+			return;
+		}
 
-document.querySelector("button").addEventListener("click", () => {
-
-  const username = document.getElementById("user").value;
-
-  const password = document.getElementById("password").value;
-
-  login(username, password);
-
+		window.location.href = "/admin/";
+	}
+	catch {
+		error.textContent = "Could not connect to the server";
+		error.hidden = false;
+	}
 });
