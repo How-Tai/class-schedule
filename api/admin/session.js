@@ -42,7 +42,12 @@ module.exports = function handler(req, res) {
 	try {
 		const data = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
 		if(!data.exp || Date.now() > data.exp) return res.status(401).json({ authenticated: false });
-		return res.status(200).json({ authenticated: true, username: data.username });
+		return res.status(200).json({
+			authenticated: true,
+			id: data.id,
+			username: data.username,
+			role: data.role
+		});
 	}
 	catch {
 		return res.status(401).json({ authenticated: false });
