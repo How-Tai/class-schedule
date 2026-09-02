@@ -23,6 +23,12 @@ header h1 {
 	margin: 0;
 }
 
+.header-subtitle {
+	margin: 4px 0 0;
+	color: #666;
+	font-size: 14px;
+}
+
 .header-actions {
 	display: flex;
 	align-items: center;
@@ -44,7 +50,8 @@ main {
 	margin-bottom: 20px;
 }
 
-.role {
+.role,
+.count-badge {
 	padding: 4px 10px;
 	border-radius: 999px;
 	background: #e8eefc;
@@ -63,10 +70,25 @@ main {
 	border: 1px solid #ddd;
 	border-radius: 14px;
 	padding: 20px;
+	min-width: 0;
 }
 
 .panel h2 {
-	margin-top: 0;
+	margin: 0;
+}
+
+.section-heading {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 16px;
+	margin-bottom: 16px;
+}
+
+.section-heading p {
+	margin: 6px 0 0;
+	color: #666;
+	line-height: 1.45;
 }
 
 .full {
@@ -79,6 +101,8 @@ form {
 }
 
 label {
+	display: inline-block;
+	margin-bottom: 6px;
 	font-weight: 600;
 }
 
@@ -96,6 +120,14 @@ textarea {
 	border: 1px solid #bbb;
 	border-radius: 8px;
 	background: white;
+}
+
+input:focus,
+textarea:focus,
+button:focus-visible,
+a.button-link:focus-visible {
+	outline: 2px solid #202124;
+	outline-offset: 2px;
 }
 
 textarea {
@@ -134,15 +166,33 @@ button.primary {
 button.danger {
 	color: #b00020;
 	border-color: #e2a7b2;
+}
+
+.form-actions,
+.item-actions {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.item-actions {
 	align-self: center;
+	justify-content: flex-end;
 }
 
 .item-card {
 	display: flex;
 	justify-content: space-between;
+	align-items: flex-start;
 	gap: 18px;
 	padding: 16px 0;
 	border-bottom: 1px solid #eee;
+}
+
+.item-card > div:first-child {
+	min-width: 0;
+	flex: 1;
 }
 
 .item-card:last-child {
@@ -152,6 +202,7 @@ button.danger {
 .item-card h3,
 .item-card p {
 	margin: 0 0 6px;
+	overflow-wrap: anywhere;
 }
 
 .item-card small {
@@ -218,7 +269,18 @@ button.danger {
 		flex-direction: column;
 	}
 
+	.section-heading,
 	.item-card {
 		flex-direction: column;
+	}
+
+	.item-actions {
+		align-self: stretch;
+		justify-content: flex-start;
+	}
+
+	.item-actions button,
+	.form-actions button {
+		flex: 1;
 	}
 }
