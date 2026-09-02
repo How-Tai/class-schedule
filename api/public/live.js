@@ -1,0 +1,35 @@
+const { neon } = require("@neondatabase/serverless");
+
+module.exports = async function handler(req, res) {
+	if(req.method !== "GET") {
+		res.setHeader("Allow", "GET");
+		return res.status(405).json({ error: "Method not allowed" });
+	}
+
+	if(!process.env.DATABASE_URL) {
+		return res.status(500).json({ error: "Database is not configured" });
+	}
+
+	try {
+		const sql = neon(process.env.DATABASE_URL);
+		const announcements = await sql`
+			SELECT id, title, message, created_at
+			FROM announcements
+			ORDER BY created_at DESC
+		`;
+
+		const events = await sql`
+			SELECT id, title, details, event_date, start_time, end_time, created_at
+			FROM schedule_events
+			WHERE event_date >= CURRENT_DATE
+			ORDER BY event_date, start_time, created_at
+		`;
+
+		res.setHeader("Cache-Control", "no-store");
+		return res.status(200).json({ announcements, events });
+	}
+	catch(error) {
+		console.error(error);
+		return res.status(500).json({ error: "Database error" });
+	}
+};
