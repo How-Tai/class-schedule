@@ -1,26 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>M2-19 Class Schedule</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>M2-19 Class Schedule</title>
+	<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <a class="back-button" href="https://school-utils-rho.vercel.app/">← Back</a>
-    <div id="toggles">
-        <input type="checkbox" id="showMilliseconds" onchange="toggleMilliseconds()">
-        <label for="showMilliseconds">Show milliseconds</label>
-        <br>
-        <input type="checkbox" id="displaySchedule" onchange="toggleDisplaySchedule()">
-        <label for="displaySchedule">Display schedule</label>
-    </div>
-    <h1 id="dayTime">Loading...</h1>
-    <p id="current" style="font-size: 24px;">Loading...</p>
-    <p id="next" style="font-size: 24px">Loading...</p>
+	<a class="back-button" href="https://school-utils-rho.vercel.app/">← Back</a>
 
-    <img id="schedule" src="schedule.jpg" alt="Class Schedule" style="display: none; max-width: 100%;"
->
-    <script src="script.js"></script>
-    <link rel="stylesheet" href="style.css">
+	<div id="toggles">
+		<input type="checkbox" id="showMilliseconds" onchange="toggleMilliseconds()">
+		<label for="showMilliseconds">Show milliseconds</label>
+		<br>
+		<input type="checkbox" id="displaySchedule" onchange="toggleDisplaySchedule()">
+		<label for="displaySchedule">Display schedule</label>
+	</div>
+
+	<main>
+		<section id="announcements" class="announcements" hidden>
+			<h2>Announcements</h2>
+			<div id="announcement-list"></div>
+		</section>
+
+		<h1 id="dayTime">Loading...</h1>
+
+		<section id="live-events" class="live-events" hidden>
+			<h2>Current Schedule Override</h2>
+			<div id="live-event-list"></div>
+		</section>
+
+		<p id="current" class="schedule-line">Loading...</p>
+		<p id="next" class="schedule-line">Loading...</p>
+		<p id="live-status" class="live-status"></p>
+
+		<img id="schedule" src="schedule.jpg" alt="Class Schedule" style="display: none; max-width: 100%;">
+	</main>
+
+	<script src="script.js"></script>
 </body>
 </html>
