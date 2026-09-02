@@ -12,10 +12,17 @@ module.exports = async function handler(req, res) {
 
 	try {
 		const sql = neon(process.env.DATABASE_URL);
+
+		await sql`
+			DELETE FROM schedule_events
+			WHERE (event_date + end_time + INTERVAL '5 minutes') < (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Bangkok')
+		`;
+
 		const announcements = await sql`
 			SELECT id, title, message, created_at
 			FROM announcements
 			ORDER BY created_at DESC
+			LIMIT 20
 		`;
 
 		const events = await sql`
