@@ -70,30 +70,28 @@ function formatDate(date) {
 	return `${day}/${month}/${year}`;
 }
 
-function escapeText(value) {
-	return String(value ?? "");
-}
-
 async function loadSession() {
 	const data = await api("/api/admin/session", { method: "GET" });
 	session = data;
 
 	document.getElementById("welcome").textContent = `Logged in as ${data.username}`;
 	document.getElementById("role").textContent = data.role;
-	if(data.role === "owner") document.getElementById("hash-link").hidden = false;
+	document.getElementById("hash-link").hidden = data.role !== "owner";
 }
 
 async function loadAnnouncements() {
 	const data = await api("/api/admin/announcements", { method: "GET" });
+	const announcements = Array.isArray(data.announcements) ? data.announcements : [];
 	const list = document.getElementById("announcement-list");
 	list.innerHTML = "";
+	document.getElementById("announcement-count").textContent = announcements.length;
 
-	if(data.announcements.length === 0) {
+	if(announcements.length === 0) {
 		list.innerHTML = '<p class="empty">No announcements.</p>';
 		return;
 	}
 
-	for(const item of data.announcements) {
+	for(const item of announcements) {
 		const card = document.createElement("article");
 		card.className = "item-card";
 
@@ -103,8 +101,8 @@ async function loadAnnouncements() {
 		const meta = document.createElement("small");
 		const del = document.createElement("button");
 
-		title.textContent = escapeText(item.title);
-		message.textContent = escapeText(item.message);
+		title.textContent = String(item.title ?? "");
+		message.textContent = String(item.message ?? "");
 		meta.textContent = new Date(item.created_at).toLocaleString("en-GB", { timeZone: "Asia/Bangkok" });
 		del.textContent = "Delete";
 		del.className = "danger";
@@ -119,10 +117,11 @@ async function loadAnnouncements() {
 
 async function loadEvents() {
 	const data = await api("/api/admin/events", { method: "GET" });
+	const events = Array.isArray(data.events) ? data.events : [];
+	const visible = events.filter(event => eventStatus(event) !== "Ended");
 	const list = document.getElementById("event-list");
 	list.innerHTML = "";
-
-	const visible = data.events.filter(event => eventStatus(event) !== "Ended");
+	document.getElementById("event-count").textContent = visible.length;
 
 	if(visible.length === 0) {
 		list.innerHTML = '<p class="empty">No active or upcoming overrides.</p>';
@@ -144,7 +143,7 @@ async function loadEvents() {
 		const del = document.createElement("button");
 
 		const status = eventStatus(event);
-		title.textContent = escapeText(event.title);
+		title.textContent = String(event.title ?? "");
 		badge.textContent = status;
 		badge.className = status === "In action" ? "badge live" : "badge";
 		heading.className = "item-heading";
@@ -174,16 +173,16 @@ async function loadEvents() {
 function beginEditEvent(event) {
 	editingEventId = event.id;
 
-	document.getElementById("event-title").value = event.title;
+	document.getElementById("event-title").value = event.title || "";
 	document.getElementById("event-details").value = event.details || "";
 	document.getElementById("event-date").value = normalizeDate(event.event_date);
 	document.getElementById("event-start").value = normalizeTime(event.start_time);
 	document.getElementById("event-end").value = normalizeTime(event.end_time);
-
 	document.getElementById("event-form-title").textContent = "Edit Schedule Override";
 	document.getElementById("event-submit").textContent = "Save Changes";
 	document.getElementById("event-cancel").hidden = false;
-	document.getElementById("event-title").focus();
+	document.getElementById("event-editor-panel").scrollIntoView({ behavior: "smooth", block: "start" });
+	document.getElementById("event-title").focus({ preventScroll: true });
 }
 
 function cancelEditEvent() {
@@ -200,6 +199,7 @@ async function deleteAnnouncement(id) {
 
 	try {
 		await api(`/api/admin/announcements?id=${id}`, { method: "DELETE" });
+		showMessage("Announcement deleted.");
 		await loadAnnouncements();
 	}
 	catch(error) {
@@ -213,6 +213,7 @@ async function deleteEvent(id) {
 	try {
 		await api(`/api/admin/events?id=${id}`, { method: "DELETE" });
 		if(editingEventId === id) cancelEditEvent();
+		showMessage("Schedule override deleted.");
 		await loadEvents();
 	}
 	catch(error) {
@@ -296,15 +297,21 @@ document.getElementById("logout").addEventListener("click", async () => {
 async function init() {
 	try {
 		await loadSession();
-		document.getElementById("event-date").value = bangkokNow().date;
-		await Promise.all([loadAnnouncements(), loadEvents()]);
-		document.getElementById("loading").hidden = true;
-		document.getElementById("admin").hidden = false;
 	}
 	catch(error) {
 		console.error(error);
+		return;
 	}
+
+	document.getElementById("event-date").value = bangkokNow().date;
+	document.getElementById("loading").hidden = true;
+	document.getElementById("admin").hidden = false;
+
+	const results = await Promise.allSettled([loadAnnouncements(), loadEvents()]);
+	const failed = results.filter(result => result.status === "rejected");
+	if(failed.length > 0) showMessage("Some dashboard data could not be loaded. Try refreshing.", true);
 }
 
 init();
 setInterval(() => loadEvents().catch(() => {}), 10000);
+setInterval(() => loadAnnouncements().catch(() => {}), 30000);
