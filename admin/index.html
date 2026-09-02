@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Admin</title>
+</head>
+<body>
+	<main id="admin" hidden>
+		<h1>Admin</h1>
+		<p id="welcome"></p>
+		<button id="logout" type="button">Logout</button>
+	</main>
+
+	<p id="loading">Checking session...</p>
+
+	<script>
+		async function checkSession() {
+			try {
+				const res = await fetch("/api/admin/session", {
+					credentials: "include"
+				});
+
+				if(!res.ok) {
+					window.location.href = "/admin/login.html";
+					return;
+				}
+
+				const data = await res.json();
+
+				document.getElementById("loading").hidden = true;
+				document.getElementById("admin").hidden = false;
+				document.getElementById("welcome").textContent = `Logged in as ${data.username}`;
+			}
+			catch {
+				window.location.href = "/admin/login.html";
+			}
+		}
+
+		document.getElementById("logout").addEventListener("click", async () => {
+			await fetch("/api/admin/logout", {
+				method: "POST",
+				credentials: "include"
+			});
+
+			window.location.href = "/admin/login.html";
+		});
+
+		checkSession();
+	</script>
+</body>
+</html>
