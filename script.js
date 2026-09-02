@@ -251,7 +251,7 @@ async function loadLiveData() {
 	}
 }
 
-setInterval(updateDisplay, 100);
+setInterval(updateDisplay, 1);
 setInterval(loadLiveData, 10000);
 updateDisplay();
 loadLiveData();
