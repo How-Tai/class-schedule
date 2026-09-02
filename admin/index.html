@@ -3,57 +3,95 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Admin</title>
+	<title>Admin Panel</title>
+	<link rel="stylesheet" href="/admin/style.css">
 </head>
 <body>
-	<main id="admin" hidden>
-		<h1>Admin</h1>
-		<p id="welcome"></p>
-		<p id="role"></p>
-		<p id="owner-tools" hidden><a href="/admin/hash.html">Password Hash Utility</a></p>
-		<button id="logout" type="button">Logout</button>
-	</main>
+	<header>
+		<h1>Admin Panel</h1>
+		<div class="header-actions">
+			<a id="hash-link" class="button-link" href="/admin/hash.html" hidden>Hash Password</a>
+			<a class="button-link" href="/">View Schedule</a>
+			<button id="logout" type="button">Logout</button>
+		</div>
+	</header>
 
 	<p id="loading">Checking session...</p>
 
-	<script>
-		async function checkSession() {
-			try {
-				const res = await fetch("/api/admin/session", {
-					credentials: "include"
-				});
+	<main id="admin" hidden>
+		<div class="top-info">
+			<strong id="welcome"></strong>
+			<span id="role" class="role"></span>
+		</div>
 
-				if(!res.ok) {
-					window.location.href = "/admin/login.html";
-					return;
-				}
+		<div id="message" class="message" hidden></div>
 
-				const data = await res.json();
+		<div class="grid">
+			<section class="panel">
+				<h2>New Announcement</h2>
+				<form id="announcement-form">
+					<div>
+						<label for="announcement-title">Title</label>
+						<input id="announcement-title" type="text" maxlength="120" required>
+					</div>
 
-				document.getElementById("loading").hidden = true;
-				document.getElementById("admin").hidden = false;
-				document.getElementById("welcome").textContent = `Logged in as ${data.username}`;
-				document.getElementById("role").textContent = `Role: ${data.role}`;
+					<div>
+						<label for="announcement-message">Message</label>
+						<textarea id="announcement-message" maxlength="2000" required></textarea>
+					</div>
 
-				if(data.role === "owner") {
-					document.getElementById("owner-tools").hidden = false;
-				}
-			}
-			catch {
-				window.location.href = "/admin/login.html";
-			}
-		}
+					<button class="primary" type="submit">Publish Announcement</button>
+				</form>
+			</section>
 
-		document.getElementById("logout").addEventListener("click", async () => {
-			await fetch("/api/admin/logout", {
-				method: "POST",
-				credentials: "include"
-			});
+			<section class="panel">
+				<h2>New Schedule Override</h2>
+				<p>This replaces the normal class display during its time. Overlapping overrides are all shown.</p>
 
-			window.location.href = "/admin/login.html";
-		});
+				<form id="event-form">
+					<div>
+						<label for="event-title">Title</label>
+						<input id="event-title" type="text" maxlength="120" placeholder="Assembly, exam, activity..." required>
+					</div>
 
-		checkSession();
-	</script>
+					<div>
+						<label for="event-details">Details</label>
+						<textarea id="event-details" maxlength="1000" placeholder="Optional details"></textarea>
+					</div>
+
+					<div class="time-grid">
+						<div>
+							<label for="event-date">Date</label>
+							<input id="event-date" type="date" required>
+						</div>
+
+						<div>
+							<label for="event-start">Start</label>
+							<input id="event-start" type="time" required>
+						</div>
+
+						<div>
+							<label for="event-end">End</label>
+							<input id="event-end" type="time" required>
+						</div>
+					</div>
+
+					<button class="primary" type="submit">Create Override</button>
+				</form>
+			</section>
+
+			<section class="panel full">
+				<h2>Active & Upcoming Schedule Overrides</h2>
+				<div id="event-list"></div>
+			</section>
+
+			<section class="panel full">
+				<h2>Announcements</h2>
+				<div id="announcement-list"></div>
+			</section>
+		</div>
+	</main>
+
+	<script src="/admin/panel.js"></script>
 </body>
 </html>
