@@ -19,9 +19,13 @@ module.exports = async function handler(req, res) {
 		`;
 
 		const events = await sql`
-			SELECT id, title, details, event_date, start_time, end_time, created_at
+			SELECT id, title, details,
+				event_date::text AS event_date,
+				start_time::text AS start_time,
+				end_time::text AS end_time,
+				created_at
 			FROM schedule_events
-			WHERE event_date >= CURRENT_DATE
+			WHERE event_date >= (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Bangkok')::date
 			ORDER BY event_date, start_time, created_at
 		`;
 
