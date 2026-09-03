@@ -15,7 +15,7 @@ module.exports = async function handler(req, res) {
 
 		await sql`
 			DELETE FROM schedule_events
-			WHERE (event_date + end_time + INTERVAL '5 minutes') < (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Bangkok')
+			WHERE (event_date + end_time + INTERVAL '1 day') < (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Bangkok')
 		`;
 
 		const announcements = await sql`
